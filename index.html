@@ -143,30 +143,38 @@
                     <button class="w-full text-left p-2 bg-gray-50 rounded hover:bg-indigo-50">Matka sukulaisille</button>
                     <button class="w-full text-left p-2 bg-gray-50 rounded hover:bg-indigo-50">Mökkimatka</button>
                     <button class="w-full text-left p-2 bg-gray-50 rounded hover:bg-indigo-50">Airbnb matkat Suomessa</button>
+                    <button class="w-full text-left p-2 bg-gray-50 rounded hover:bg-indigo-50">Hotellimatkat</button>
                 ` : `
                     <p class="text-sm text-gray-600 mb-2">Select trip type:</p>
                     <button class="w-full text-left p-2 bg-gray-50 rounded hover:bg-indigo-50">Visit relatives</button>
                     <button class="w-full text-left p-2 bg-gray-50 rounded hover:bg-indigo-50">Cabin Trip</button>
                     <button class="w-full text-left p-2 bg-gray-50 rounded hover:bg-indigo-50">Airbnb trips in Finland</button>
+                    <button class="w-full text-left p-2 bg-gray-50 rounded hover:bg-indigo-50">Hotel trips</button>
                 `;
             } else if(type === 'packing') {
                 title.innerText = t.packingTitle;
                 body.innerHTML = currentLang === 'fi' ? `
+                    <p class="text-xs font-bold text-indigo-600 uppercase tracking-wider mb-1">Pakkaa edellisenä iltana:</p>
                     <label class="flex items-center space-x-2 text-sm"><input type="checkbox" class="rounded"> Omat vaatteet omaan kassiin</label>
                     <label class="flex items-center space-x-2 text-sm"><input type="checkbox" class="rounded"> Vaihtopaita + muut + 1 / matkapäivä</label>
+                    <label class="flex items-center space-x-2 text-sm"><input type="checkbox" class="rounded"> Muovinen sähköjako, jatkojohto, phone charger</label>
+                    <label class="flex items-center space-x-2 text-sm"><input type="checkbox" class="rounded"> Matkahammasharjat, hammastahna, oma hiusharja</label>
+                    
+                    <p class="text-xs font-bold text-gray-500 uppercase tracking-wider mt-3 mb-1">Muut tärkeät:</p>
                     <label class="flex items-center space-x-2 text-sm"><input type="checkbox" class="rounded"> Lääkkeet</label>
                     <label class="flex items-center space-x-2 text-sm"><input type="checkbox" class="rounded"> Cpap laite</label>
                     <label class="flex items-center space-x-2 text-sm"><input type="checkbox" class="rounded"> Verenpaine mittari</label>
-                    <label class="flex items-center space-x-2 text-sm"><input type="checkbox" class="rounded"> Muovinen sähköjako, jatkojohto, phone charger</label>
-                    <label class="flex items-center space-x-2 text-sm"><input type="checkbox" class="rounded"> Hammasharjat, hammastahna, oma hiusharja</label>
                 ` : `
+                    <p class="text-xs font-bold text-indigo-600 uppercase tracking-wider mb-1">Pack the night before:</p>
                     <label class="flex items-center space-x-2 text-sm"><input type="checkbox" class="rounded"> Pack own clothes in own bag</label>
                     <label class="flex items-center space-x-2 text-sm"><input type="checkbox" class="rounded"> Change shirt + others + 1 / travel day</label>
+                    <label class="flex items-center space-x-2 text-sm"><input type="checkbox" class="rounded"> Plastic power strip, extension cord, phone charger</label>
+                    <label class="flex items-center space-x-2 text-sm"><input type="checkbox" class="rounded"> Travel toothbrushes, toothpaste, hairbrush</label>
+                    
+                    <p class="text-xs font-bold text-gray-500 uppercase tracking-wider mt-3 mb-1">Other essentials:</p>
                     <label class="flex items-center space-x-2 text-sm"><input type="checkbox" class="rounded"> Medications</label>
                     <label class="flex items-center space-x-2 text-sm"><input type="checkbox" class="rounded"> CPAP device</label>
                     <label class="flex items-center space-x-2 text-sm"><input type="checkbox" class="rounded"> Blood pressure monitor</label>
-                    <label class="flex items-center space-x-2 text-sm"><input type="checkbox" class="rounded"> Plastic power strip, extension cord, phone charger</label>
-                    <label class="flex items-center space-x-2 text-sm"><input type="checkbox" class="rounded"> Toothbrushes, toothpaste, hairbrush</label>
                 `;
             } else if(type === 'shopping') {
                 title.innerText = t.shoppingTitle;
