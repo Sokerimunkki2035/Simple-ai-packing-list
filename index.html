@@ -121,7 +121,6 @@
             document.getElementById('navShopping').innerText = t.navShopping;
             document.getElementById('navAirbnb').innerText = t.navAirbnb;
             
-            // Only update welcome if no other interaction happened yet
             const resp = document.getElementById('aiResponse');
             if(resp.dataset.default === "true" || !resp.dataset.default) {
                 resp.innerText = t.aiWelcome;
@@ -155,14 +154,16 @@
                 body.innerHTML = currentLang === 'fi' ? `
                     <label class="flex items-center space-x-2 text-sm"><input type="checkbox" class="rounded"> Omat vaatteet omaan kassiin</label>
                     <label class="flex items-center space-x-2 text-sm"><input type="checkbox" class="rounded"> Vaihtopaita + muut + 1 / matkapäivä</label>
-                    <label class="flex items-center space-x-2 text-sm"><input type="checkbox" class="rounded"> Lääkkeet & Cpap laite</label>
+                    <label class="flex items-center space-x-2 text-sm"><input type="checkbox" class="rounded"> Lääkkeet</label>
+                    <label class="flex items-center space-x-2 text-sm"><input type="checkbox" class="rounded"> Cpap laite</label>
                     <label class="flex items-center space-x-2 text-sm"><input type="checkbox" class="rounded"> Verenpaine mittari</label>
                     <label class="flex items-center space-x-2 text-sm"><input type="checkbox" class="rounded"> Muovinen sähköjako, jatkojohto, phone charger</label>
                     <label class="flex items-center space-x-2 text-sm"><input type="checkbox" class="rounded"> Hammasharjat, hammastahna, oma hiusharja</label>
                 ` : `
                     <label class="flex items-center space-x-2 text-sm"><input type="checkbox" class="rounded"> Pack own clothes in own bag</label>
                     <label class="flex items-center space-x-2 text-sm"><input type="checkbox" class="rounded"> Change shirt + others + 1 / travel day</label>
-                    <label class="flex items-center space-x-2 text-sm"><input type="checkbox" class="rounded"> Medications & CPAP device</label>
+                    <label class="flex items-center space-x-2 text-sm"><input type="checkbox" class="rounded"> Medications</label>
+                    <label class="flex items-center space-x-2 text-sm"><input type="checkbox" class="rounded"> CPAP device</label>
                     <label class="flex items-center space-x-2 text-sm"><input type="checkbox" class="rounded"> Blood pressure monitor</label>
                     <label class="flex items-center space-x-2 text-sm"><input type="checkbox" class="rounded"> Plastic power strip, extension cord, phone charger</label>
                     <label class="flex items-center space-x-2 text-sm"><input type="checkbox" class="rounded"> Toothbrushes, toothpaste, hairbrush</label>
