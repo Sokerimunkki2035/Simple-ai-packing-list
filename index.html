@@ -26,7 +26,7 @@
             </div>
             <div class="flex gap-2">
                 <input type="text" id="aiInput" placeholder="Kirjoita tai kysy tekoälyltä..." class="flex-1 border rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400">
-                <button onclick="handleAIPrompt()" class="bg-indigo-600 text-white px-4 py-2 rounded-xl text-sm font-medium hover:bg-indigo-700">Lähetä</button>
+                <button onclick="handleAIPrompt()" id="sendBtn" class="bg-indigo-600 text-white px-4 py-2 rounded-xl text-sm font-medium hover:bg-indigo-700">Lähetä</button>
             </div>
         </section>
 
@@ -54,7 +54,7 @@
         <div id="contentSection" class="bg-white p-4 rounded-2xl shadow-sm border border-gray-100 hidden">
             <div class="flex justify-between items-center mb-3">
                 <h3 id="sectionTitle" class="font-semibold text-gray-800">Otsikko</h3>
-                <button onclick="closeSection()" class="text-gray-400 hover:text-gray-600 text-sm">Sulje X</button>
+                <button onclick="closeSection()" id="closeBtn" class="text-gray-400 hover:text-gray-600 text-sm">Sulje X</button>
             </div>
             <div id="sectionBody" class="space-y-2">
                 <!-- Dynamic content inserted via JS -->
@@ -64,6 +64,7 @@
 
     <script>
         let currentLang = 'fi';
+        let currentActiveSection = null;
         
         const translations = {
             fi: {
@@ -71,6 +72,7 @@
                 aiHeader: "Tekoälyavustin & Tsemppi",
                 aiPlaceholder: "Kirjoita tai kysy tekoälyltä...",
                 send: "Lähetä",
+                close: "Sulje X",
                 navTrips: "Matkatyypit",
                 navPacking: "Pakkauslista",
                 navShopping: "Ostoslista",
@@ -78,13 +80,15 @@
                 tripsTitle: "Matkatyypit",
                 packingTitle: "Pakkauslista",
                 shoppingTitle: "Ostoslista",
-                airbnbTitle: "Airbnb & WhatsApp"
+                airbnbTitle: "Airbnb & WhatsApp",
+                aiWelcome: "Hei! Miten matkavalmistelut sujuvat? Kerro, jos mietit jotain tai haluat ehdotuksia."
             },
             en: {
                 title: "Travel Memo",
                 aiHeader: "AI Assistant & Support",
                 aiPlaceholder: "Type or ask AI...",
                 send: "Send",
+                close: "Close X",
                 navTrips: "Trip Types",
                 navPacking: "Packing List",
                 navShopping: "Shopping List",
@@ -92,13 +96,17 @@
                 tripsTitle: "Trip Types",
                 packingTitle: "Packing List",
                 shoppingTitle: "Shopping List",
-                airbnbTitle: "Airbnb & WhatsApp"
+                airbnbTitle: "Airbnb & WhatsApp",
+                aiWelcome: "Hi! How are your travel preparations going? Let me know if you need any suggestions or help."
             }
         };
 
         function toggleLang() {
             currentLang = currentLang === 'fi' ? 'en' : 'fi';
             updateTexts();
+            if(currentActiveSection) {
+                showSection(currentActiveSection);
+            }
         }
 
         function updateTexts() {
@@ -106,13 +114,23 @@
             document.getElementById('appTitle').innerText = t.title;
             document.getElementById('aiHeader').innerText = t.aiHeader;
             document.getElementById('aiInput').placeholder = t.aiPlaceholder;
+            document.getElementById('sendBtn').innerText = t.send;
+            document.getElementById('closeBtn').innerText = t.close;
             document.getElementById('navTrips').innerText = t.navTrips;
             document.getElementById('navPacking').innerText = t.navPacking;
             document.getElementById('navShopping').innerText = t.navShopping;
             document.getElementById('navAirbnb').innerText = t.navAirbnb;
+            
+            // Only update welcome if no other interaction happened yet
+            const resp = document.getElementById('aiResponse');
+            if(resp.dataset.default === "true" || !resp.dataset.default) {
+                resp.innerText = t.aiWelcome;
+                resp.dataset.default = "true";
+            }
         }
 
         function showSection(type) {
+            currentActiveSection = type;
             const section = document.getElementById('contentSection');
             const title = document.getElementById('sectionTitle');
             const body = document.getElementById('sectionBody');
@@ -121,62 +139,102 @@
             const t = translations[currentLang];
             if(type === 'trips') {
                 title.innerText = t.tripsTitle;
-                body.innerHTML = `
+                body.innerHTML = currentLang === 'fi' ? `
                     <p class="text-sm text-gray-600 mb-2">Valitse matkatyyppi:</p>
                     <button class="w-full text-left p-2 bg-gray-50 rounded hover:bg-indigo-50">Matka sukulaisille</button>
                     <button class="w-full text-left p-2 bg-gray-50 rounded hover:bg-indigo-50">Mökkimatka</button>
                     <button class="w-full text-left p-2 bg-gray-50 rounded hover:bg-indigo-50">Airbnb matkat Suomessa</button>
+                ` : `
+                    <p class="text-sm text-gray-600 mb-2">Select trip type:</p>
+                    <button class="w-full text-left p-2 bg-gray-50 rounded hover:bg-indigo-50">Visit relatives</button>
+                    <button class="w-full text-left p-2 bg-gray-50 rounded hover:bg-indigo-50">Cabin Trip</button>
+                    <button class="w-full text-left p-2 bg-gray-50 rounded hover:bg-indigo-50">Airbnb trips in Finland</button>
                 `;
             } else if(type === 'packing') {
                 title.innerText = t.packingTitle;
-                body.innerHTML = `
+                body.innerHTML = currentLang === 'fi' ? `
                     <label class="flex items-center space-x-2 text-sm"><input type="checkbox" class="rounded"> Omat vaatteet omaan kassiin</label>
                     <label class="flex items-center space-x-2 text-sm"><input type="checkbox" class="rounded"> Vaihtopaita + muut + 1 / matkapäivä</label>
                     <label class="flex items-center space-x-2 text-sm"><input type="checkbox" class="rounded"> Lääkkeet & Cpap laite</label>
                     <label class="flex items-center space-x-2 text-sm"><input type="checkbox" class="rounded"> Verenpaine mittari</label>
                     <label class="flex items-center space-x-2 text-sm"><input type="checkbox" class="rounded"> Muovinen sähköjako, jatkojohto, phone charger</label>
                     <label class="flex items-center space-x-2 text-sm"><input type="checkbox" class="rounded"> Hammasharjat, hammastahna, oma hiusharja</label>
+                ` : `
+                    <label class="flex items-center space-x-2 text-sm"><input type="checkbox" class="rounded"> Pack own clothes in own bag</label>
+                    <label class="flex items-center space-x-2 text-sm"><input type="checkbox" class="rounded"> Change shirt + others + 1 / travel day</label>
+                    <label class="flex items-center space-x-2 text-sm"><input type="checkbox" class="rounded"> Medications & CPAP device</label>
+                    <label class="flex items-center space-x-2 text-sm"><input type="checkbox" class="rounded"> Blood pressure monitor</label>
+                    <label class="flex items-center space-x-2 text-sm"><input type="checkbox" class="rounded"> Plastic power strip, extension cord, phone charger</label>
+                    <label class="flex items-center space-x-2 text-sm"><input type="checkbox" class="rounded"> Toothbrushes, toothpaste, hairbrush</label>
                 `;
             } else if(type === 'shopping') {
                 title.innerText = t.shoppingTitle;
-                body.innerHTML = `
+                body.innerHTML = currentLang === 'fi' ? `
                     <div class="space-y-2">
                         <input type="text" placeholder="Lisää ostos..." class="w-full border rounded p-2 text-sm">
                         <div class="text-sm bg-gray-50 p-2 rounded">🛒 Retkikahvilusikka ja kahvikuppi</div>
                         <div class="text-sm bg-gray-50 p-2 rounded">🛒 Lyhyt jatkojohto</div>
+                        <div class="text-sm bg-gray-50 p-2 rounded">🛒 Hiusharja (tarvittaessa)</div>
+                    </div>
+                ` : `
+                    <div class="space-y-2">
+                        <input type="text" placeholder="Add shopping item..." class="w-full border rounded p-2 text-sm">
+                        <div class="text-sm bg-gray-50 p-2 rounded">🛒 Camp coffee spoon and cup</div>
+                        <div class="text-sm bg-gray-50 p-2 rounded">🛒 Short extension cord</div>
+                        <div class="text-sm bg-gray-50 p-2 rounded">🛒 Hairbrush (if needed)</div>
                     </div>
                 `;
             } else if(type === 'airbnb') {
                 title.innerText = t.airbnbTitle;
-                body.innerHTML = `
+                body.innerHTML = currentLang === 'fi' ? `
                     <div class="space-y-2 text-sm">
                         <p class="text-gray-600">Tallenna Airbnb-kohteita ja jaa vaimolle:</p>
                         <input type="text" placeholder="Kohteen nimi tai linkki..." class="w-full border rounded p-2">
                         <button class="bg-green-600 text-white w-full py-2 rounded text-sm font-medium">Jaa WhatsAppilla vaimolle</button>
+                    </div>
+                ` : `
+                    <div class="space-y-2 text-sm">
+                        <p class="text-gray-600">Save Airbnb places and share with partner:</p>
+                        <input type="text" placeholder="Place name or link..." class="w-full border rounded p-2">
+                        <button class="bg-green-600 text-white w-full py-2 rounded text-sm font-medium">Share via WhatsApp</button>
                     </div>
                 `;
             }
         }
 
         function closeSection() {
+            currentActiveSection = null;
             document.getElementById('contentSection').classList.add('hidden');
         }
 
         function handleAIPrompt() {
             const input = document.getElementById('aiInput');
             const responseDiv = document.getElementById('aiResponse');
+            responseDiv.dataset.default = "false";
             const val = input.value.trim().toLowerCase();
             
             if(!val) return;
 
-            if(val.includes('stressi') || val.includes('väsy')) {
-                responseDiv.innerText = "Hengitä rauhassa. Olet tehnyt jo paljon, ja kaikki on huomenna valmista ilman kiirettä.";
-            } else if(val.includes('huomenna') || val.includes('matka')) {
-                responseDiv.innerText = "Miten jännää ja ihanaa, että huomenna päästään matkalle! ✨";
-            } else if(val.includes('lataus') || val.includes('sähköauto')) {
-                responseDiv.innerText = "Sähköauton pikalatauksen varrelta löytyisi mukava paikallinen puoti ja kahvila kymmenen minuutin päässä!";
+            if (currentLang === 'fi') {
+                if(val.includes('stressi') || val.includes('väsy')) {
+                    responseDiv.innerText = "Hengitä rauhassa. Olet tehnyt jo paljon, ja kaikki on huomenna valmista ilman kiirettä.";
+                } else if(val.includes('huomenna') || val.includes('matka')) {
+                    responseDiv.innerText = "Miten jännää ja ihanaa, että huomenna päästään matkalle! ✨";
+                } else if(val.includes('lataus') || val.includes('sähköauto')) {
+                    responseDiv.innerText = "Sähköauton pikalatauksen varrelta löytyisi mukava paikallinen puoti ja kahvila kymmenen minuutin päässä!";
+                } else {
+                    responseDiv.innerText = "Tallensin muistiin: '" + input.value + "'. Haluatko lisätä tämän listalle?";
+                }
             } else {
-                responseDiv.innerText = "Tallensin muistiin: '" + input.value + "'. Haluatko lisätä tämän listalle vai tarkistaa toisen listan sisällön?";
+                if(val.includes('stress') || val.includes('tired')) {
+                    responseDiv.innerText = "Take a deep breath. You've prepared well, and everything will be ready tomorrow without any rush.";
+                } else if(val.includes('tomorrow') || val.includes('trip')) {
+                    responseDiv.innerText = "How exciting and wonderful that we are heading on a trip tomorrow! ✨";
+                } else if(val.includes('charge') || val.includes('ev') || val.includes('electric')) {
+                    responseDiv.innerText = "Near the EV fast charger, there is a cozy local boutique and a café just 10 minutes away!";
+                } else {
+                    responseDiv.innerText = "Saved to memory: '" + input.value + "'. Would you like to add this to the list?";
+                }
             }
             input.value = '';
         }
