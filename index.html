@@ -15,14 +15,14 @@
 
     <!-- Main Container -->
     <main class="flex-1 max-w-md w-full mx-auto p-4 space-y-6">
-        <!-- AI Chat Bubble / Assistant Section -->
+        <!-- AI Chat Bubble / Assistant & Relaxation Section -->
         <section class="bg-white p-4 rounded-2xl shadow-sm border border-indigo-100">
             <div class="flex items-center space-x-2 mb-2">
                 <span class="text-xl">🤖</span>
-                <h2 id="aiHeader" class="font-medium text-gray-700">Tekoälyavustin & Tsemppi</h2>
+                <h2 id="aiHeader" class="font-medium text-gray-700">Tekoälyavustin & Rauhoittuminen</h2>
             </div>
             <div id="aiResponse" class="bg-indigo-50 p-3 rounded-xl text-sm text-indigo-900 mb-3">
-                Hei! Miten matkavalmistelut sujuvat? Kerro, jos mietit jotain tai haluat ehdotuksia.
+                Hei! Ota aivan rauhassa. Jutellaanko matkasta, pikalatauksen varrella olevista erikoisista paikoista tai kaivataanko pientä tsemppiä?
             </div>
             <div class="flex gap-2">
                 <input type="text" id="aiInput" placeholder="Kirjoita tai kysy tekoälyltä..." class="flex-1 border rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400">
@@ -46,7 +46,7 @@
             </button>
             <button onclick="showSection('airbnb')" class="p-4 bg-white rounded-2xl shadow-sm border border-gray-100 text-left hover:border-indigo-300 transition">
                 <span class="text-2xl block mb-1">🏡</span>
-                <span id="navAirbnb" class="font-medium text-gray-800">Airbnb & WhatsApp</span>
+                <span id="navAirbnb" class="font-medium text-gray-800">Airbnb & Kohde</span>
             </button>
         </section>
 
@@ -69,35 +69,35 @@
         const translations = {
             fi: {
                 title: "Matkamuistio",
-                aiHeader: "Tekoälyavustin & Tsemppi",
+                aiHeader: "Tekoälyavustin & Rauhoittuminen",
                 aiPlaceholder: "Kirjoita tai kysy tekoälyltä...",
                 send: "Lähetä",
                 close: "Sulje X",
                 navTrips: "Matkatyypit",
                 navPacking: "Pakkauslista",
                 navShopping: "Ostoslista",
-                navAirbnb: "Airbnb & WhatsApp",
+                navAirbnb: "Airbnb & Kohde",
                 tripsTitle: "Matkatyypit",
-                packingTitle: "Pakkauslista",
+                packingTitle: "Pakkauslista & Pelillistäminen",
                 shoppingTitle: "Ostoslista",
-                airbnbTitle: "Airbnb & WhatsApp",
-                aiWelcome: "Hei! Miten matkavalmistelut sujuvat? Kerro, jos mietit jotain tai haluat ehdotuksia."
+                airbnbTitle: "Airbnb & Erikoiset kohteet",
+                aiWelcome: "Hei! Ota aivan rauhassa. Jutellaanko matkasta, pikalatauksen varrella olevista erikoisista paikoista tai kaivataanko pientä tsemppiä?"
             },
             en: {
                 title: "Travel Memo",
-                aiHeader: "AI Assistant & Support",
+                aiHeader: "AI Assistant & Relaxation",
                 aiPlaceholder: "Type or ask AI...",
                 send: "Send",
                 close: "Close X",
                 navTrips: "Trip Types",
                 navPacking: "Packing List",
                 navShopping: "Shopping List",
-                navAirbnb: "Airbnb & WhatsApp",
+                navAirbnb: "Airbnb & Destination",
                 tripsTitle: "Trip Types",
-                packingTitle: "Packing List",
+                packingTitle: "Packing List & Progress",
                 shoppingTitle: "Shopping List",
-                airbnbTitle: "Airbnb & WhatsApp",
-                aiWelcome: "Hi! How are your travel preparations going? Let me know if you need any suggestions or help."
+                airbnbTitle: "Airbnb & Unique Spots",
+                aiWelcome: "Hi! Take it easy. Want to chat about the trip, unique stops near EV chargers, or just relax?"
             }
         };
 
@@ -154,60 +154,81 @@
             } else if(type === 'packing') {
                 title.innerText = t.packingTitle;
                 body.innerHTML = currentLang === 'fi' ? `
-                    <p class="text-xs font-bold text-indigo-600 uppercase tracking-wider mb-1">Pakkaa edellisenä iltana:</p>
-                    <label class="flex items-center space-x-2 text-sm"><input type="checkbox" class="rounded"> Omat vaatteet omaan kassiin</label>
-                    <label class="flex items-center space-x-2 text-sm"><input type="checkbox" class="rounded"> Vaihtopaita + muut + 1 / matkapäivä</label>
-                    <label class="flex items-center space-x-2 text-sm"><input type="checkbox" class="rounded"> Muovinen sähköjako, jatkojohto, phone charger</label>
-                    <label class="flex items-center space-x-2 text-sm"><input type="checkbox" class="rounded"> Matkahammasharjat, hammastahna, oma hiusharja</label>
-                    
-                    <p class="text-xs font-bold text-gray-500 uppercase tracking-wider mt-3 mb-1">Muut tärkeät:</p>
-                    <label class="flex items-center space-x-2 text-sm"><input type="checkbox" class="rounded"> Lääkkeet</label>
-                    <label class="flex items-center space-x-2 text-sm"><input type="checkbox" class="rounded"> Cpap laite</label>
-                    <label class="flex items-center space-x-2 text-sm"><input type="checkbox" class="rounded"> Verenpaine mittari</label>
+                    <div class="mb-3 bg-indigo-50 p-2 rounded-lg text-xs text-indigo-800 font-medium">
+                        🎮 Pakkauspisteet / Edistyminen: <span id="progressText">0%</span> valmiina
+                    </div>
+                    <p class="text-xs font-bold text-indigo-600 uppercase tracking-wider mb-1">Pakkaa edellisenä iltana (Jaa vaimolle):</p>
+                    <label class="flex items-center space-x-2 text-sm"><input type="checkbox" class="pack-chk rounded" onchange="updateProgress()"> Omat vaatteet omaan kassiin</label>
+                    <label class="flex items-center space-x-2 text-sm"><input type="checkbox" class="pack-chk rounded" onchange="updateProgress()"> Vaihtopaita + muut + 1 / matkapäivä</label>
+                    <label class="flex items-center space-x-2 text-sm"><input type="checkbox" class="pack-chk rounded" onchange="updateProgress()"> Pyjama housut, paita?</label>
+                    <label class="flex items-center space-x-2 text-sm"><input type="checkbox" class="pack-chk rounded" onchange="updateProgress()"> College housut</label>
+                    <label class="flex items-center space-x-2 text-sm"><input type="checkbox" class="pack-chk rounded" onchange="updateProgress()"> Oma hiusharja</label>
+                    <label class="flex items-center space-x-2 text-sm"><input type="checkbox" class="pack-chk rounded" onchange="updateProgress()"> Hammasharjat, hammastahna</label>
+                    <label class="flex items-center space-x-2 text-sm"><input type="checkbox" class="pack-chk rounded" onchange="updateProgress()"> Lääkkeet</label>
+                    <label class="flex items-center space-x-2 text-sm"><input type="checkbox" class="pack-chk rounded" onchange="updateProgress()"> Cpap laite</label>
+                    <label class="flex items-center space-x-2 text-sm"><input type="checkbox" class="pack-chk rounded" onchange="updateProgress()"> Verenpaine mittari</label>
+                    <label class="flex items-center space-x-2 text-sm"><input type="checkbox" class="pack-chk rounded" onchange="updateProgress()"> Muovinen sähköjako, jatkojohto, phone charger</label>
+                    <label class="flex items-center space-x-2 text-sm"><input type="checkbox" class="pack-chk rounded" onchange="updateProgress()"> Uimahousut</label>
+                    <label class="flex items-center space-x-2 text-sm"><input type="checkbox" class="pack-chk rounded" onchange="updateProgress()"> Lakanat & Pyyhkeet</label>
+                    <label class="flex items-center space-x-2 text-sm"><input type="checkbox" class="pack-chk rounded" onchange="updateProgress()"> Kenkiä: Crocs?, saappaat?</label>
+                    <label class="flex items-center space-x-2 text-sm"><input type="checkbox" class="pack-chk rounded" onchange="updateProgress()"> Frisbeegolf housut, shortsit, kengät</label>
                 ` : `
+                    <div class="mb-3 bg-indigo-50 p-2 rounded-lg text-xs text-indigo-800 font-medium">
+                        🎮 Packing Progress: <span id="progressText">0%</span> completed
+                    </div>
                     <p class="text-xs font-bold text-indigo-600 uppercase tracking-wider mb-1">Pack the night before:</p>
-                    <label class="flex items-center space-x-2 text-sm"><input type="checkbox" class="rounded"> Pack own clothes in own bag</label>
-                    <label class="flex items-center space-x-2 text-sm"><input type="checkbox" class="rounded"> Change shirt + others + 1 / travel day</label>
-                    <label class="flex items-center space-x-2 text-sm"><input type="checkbox" class="rounded"> Plastic power strip, extension cord, phone charger</label>
-                    <label class="flex items-center space-x-2 text-sm"><input type="checkbox" class="rounded"> Travel toothbrushes, toothpaste, hairbrush</label>
-                    
-                    <p class="text-xs font-bold text-gray-500 uppercase tracking-wider mt-3 mb-1">Other essentials:</p>
-                    <label class="flex items-center space-x-2 text-sm"><input type="checkbox" class="rounded"> Medications</label>
-                    <label class="flex items-center space-x-2 text-sm"><input type="checkbox" class="rounded"> CPAP device</label>
-                    <label class="flex items-center space-x-2 text-sm"><input type="checkbox" class="rounded"> Blood pressure monitor</label>
+                    <label class="flex items-center space-x-2 text-sm"><input type="checkbox" class="pack-chk rounded" onchange="updateProgress()"> Pack own clothes in own bag</label>
+                    <label class="flex items-center space-x-2 text-sm"><input type="checkbox" class="pack-chk rounded" onchange="updateProgress()"> Change shirt + others + 1 / travel day</label>
+                    <label class="flex items-center space-x-2 text-sm"><input type="checkbox" class="pack-chk rounded" onchange="updateProgress()"> Pajamas & Sweatpants</label>
+                    <label class="flex items-center space-x-2 text-sm"><input type="checkbox" class="pack-chk rounded" onchange="updateProgress()"> Hairbrush & Toothbrushes</label>
+                    <label class="flex items-center space-x-2 text-sm"><input type="checkbox" class="pack-chk rounded" onchange="updateProgress()"> Medications & CPAP device</label>
+                    <label class="flex items-center space-x-2 text-sm"><input type="checkbox" class="pack-chk rounded" onchange="updateProgress()"> Blood pressure monitor</label>
+                    <label class="flex items-center space-x-2 text-sm"><input type="checkbox" class="pack-chk rounded" onchange="updateProgress()"> Power strip & charger</label>
+                    <label class="flex items-center space-x-2 text-sm"><input type="checkbox" class="pack-chk rounded" onchange="updateProgress()"> Swimwear, linens & towels</label>
+                    <label class="flex items-center space-x-2 text-sm"><input type="checkbox" class="pack-chk rounded" onchange="updateProgress()"> Shoes & Disc golf gear</label>
                 `;
             } else if(type === 'shopping') {
                 title.innerText = t.shoppingTitle;
                 body.innerHTML = currentLang === 'fi' ? `
                     <div class="space-y-2">
                         <input type="text" placeholder="Lisää ostos..." class="w-full border rounded p-2 text-sm">
-                        <div class="text-sm bg-gray-50 p-2 rounded">🛒 Retkikahvilusikka ja kahvikuppi</div>
+                        <div class="text-sm bg-gray-50 p-2 rounded">🛒 Retki kahvilusikka ja kahvikuppi</div>
                         <div class="text-sm bg-gray-50 p-2 rounded">🛒 Lyhyt jatkojohto</div>
-                        <div class="text-sm bg-gray-50 p-2 rounded">🛒 Hiusharja (tarvittaessa)</div>
                     </div>
                 ` : `
                     <div class="space-y-2">
                         <input type="text" placeholder="Add shopping item..." class="w-full border rounded p-2 text-sm">
                         <div class="text-sm bg-gray-50 p-2 rounded">🛒 Camp coffee spoon and cup</div>
                         <div class="text-sm bg-gray-50 p-2 rounded">🛒 Short extension cord</div>
-                        <div class="text-sm bg-gray-50 p-2 rounded">🛒 Hairbrush (if needed)</div>
                     </div>
                 `;
             } else if(type === 'airbnb') {
                 title.innerText = t.airbnbTitle;
                 body.innerHTML = currentLang === 'fi' ? `
                     <div class="space-y-2 text-sm">
-                        <p class="text-gray-600">Tallenna Airbnb-kohteita ja jaa vaimolle:</p>
+                        <p class="text-gray-600">Tallenna Airbnb-kohteita, kuvia ja erikoisia löytöjä:</p>
                         <input type="text" placeholder="Kohteen nimi tai linkki..." class="w-full border rounded p-2">
+                        <input type="text" placeholder="Erikoispaikka tai kahvilavinkki matkan varrelta..." class="w-full border rounded p-2">
                         <button class="bg-green-600 text-white w-full py-2 rounded text-sm font-medium">Jaa WhatsAppilla vaimolle</button>
                     </div>
                 ` : `
                     <div class="space-y-2 text-sm">
-                        <p class="text-gray-600">Save Airbnb places and share with partner:</p>
+                        <p class="text-gray-600">Save Airbnb places, photos and unique spots:</p>
                         <input type="text" placeholder="Place name or link..." class="w-full border rounded p-2">
+                        <input type="text" placeholder="Unique spot or cafe along the way..." class="w-full border rounded p-2">
                         <button class="bg-green-600 text-white w-full py-2 rounded text-sm font-medium">Share via WhatsApp</button>
                     </div>
                 `;
+            }
+        }
+
+        function updateProgress() {
+            const checkboxes = document.querySelectorAll('.pack-chk');
+            const checked = document.querySelectorAll('.pack-chk:checked');
+            const percent = checkboxes.length ? Math.round((checked.length / checkboxes.length) * 100) : 0;
+            const progText = document.getElementById('progressText');
+            if(progText) {
+                progText.innerText = percent + "%";
             }
         }
 
@@ -225,22 +246,22 @@
             if(!val) return;
 
             if (currentLang === 'fi') {
-                if(val.includes('stressi') || val.includes('väsy')) {
-                    responseDiv.innerText = "Hengitä rauhassa. Olet tehnyt jo paljon, ja kaikki on huomenna valmista ilman kiirettä.";
+                if(val.includes('stressi') || val.includes('väsy') || val.includes('rauha')) {
+                    responseDiv.innerText = "Hengitä syvään ja ota aivan rauhassa. Olet tehnyt upeasti töitä matkan eteen, ja kaikki on huomenna valmista ilman mitään kiirettä.";
                 } else if(val.includes('huomenna') || val.includes('matka')) {
-                    responseDiv.innerText = "Miten jännää ja ihanaa, että huomenna päästään matkalle! ✨";
-                } else if(val.includes('lataus') || val.includes('sähköauto')) {
-                    responseDiv.innerText = "Sähköauton pikalatauksen varrelta löytyisi mukava paikallinen puoti ja kahvila kymmenen minuutin päässä!";
+                    responseDiv.innerText = "Miten jännää ja ihanaa, että huomenna päästään matkalle! ✨ Kaikki on hanskassa.";
+                } else if(val.includes('lataus') || val.includes('sähköauto') || val.includes('kahvila')) {
+                    responseDiv.innerText = "Sähköauton pikalatauksen lähellä on tunnelmallinen paikallinen puoti ja erikoinen kahvila kymmenen minuutin päässä!";
                 } else {
-                    responseDiv.innerText = "Tallensin muistiin: '" + input.value + "'. Haluatko lisätä tämän listalle?";
+                    responseDiv.innerText = "Tallensin muistiin: '" + input.value + "'. Haluatko lisätä tämän listalle tai tutkia kohdevinkkejä?";
                 }
             } else {
-                if(val.includes('stress') || val.includes('tired')) {
-                    responseDiv.innerText = "Take a deep breath. You've prepared well, and everything will be ready tomorrow without any rush.";
+                if(val.includes('stress') || val.includes('tired') || val.includes('relax')) {
+                    responseDiv.innerText = "Take a deep breath and relax. You've prepared wonderfully, and everything is ready for tomorrow without any rush.";
                 } else if(val.includes('tomorrow') || val.includes('trip')) {
                     responseDiv.innerText = "How exciting and wonderful that we are heading on a trip tomorrow! ✨";
-                } else if(val.includes('charge') || val.includes('ev') || val.includes('electric')) {
-                    responseDiv.innerText = "Near the EV fast charger, there is a cozy local boutique and a café just 10 minutes away!";
+                } else if(val.includes('charge') || val.includes('ev') || val.includes('cafe')) {
+                    responseDiv.innerText = "Near the EV fast charger, there is a cozy local shop and a unique café just 10 minutes away!";
                 } else {
                     responseDiv.innerText = "Saved to memory: '" + input.value + "'. Would you like to add this to the list?";
                 }
